@@ -25,8 +25,8 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         filter: 'isFile',
-                        flatten: true,
-                        src: paths.srcDir + '/**/*.ts',
+                        flatten: false,
+                        src: [paths.srcDir + '/**/*.ts', paths.srcDir + '/**/*.spec.ts'],
                         dest: paths.buildDir + '/js/src/'
                     }
                 ]
@@ -35,9 +35,11 @@ module.exports = function (grunt) {
 
         ts: {
             client: {
-                src: [paths.srcDir + '/**/*.ts', paths.srcDir + '/**/*.spec.ts'],
+                src: [paths.buildDir + '/js/src/**/*.ts'],
                 out: paths.buildDir + '/js/app.js',
-                sourceRoot: '/js/src/'
+                options: {
+                    //module: 'commonjs'
+                }
             }
         },
 
