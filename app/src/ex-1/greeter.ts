@@ -1,4 +1,6 @@
 module greeter {
+    export enum MyColor {Red, Blue, Green};
+
     export class Greeter {
         constructor(public greeting:string, public whereGreet:string) {
         }

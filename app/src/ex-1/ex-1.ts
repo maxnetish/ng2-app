@@ -5,7 +5,12 @@ module ex1 {
         private greeterInstance:greeter.Greeter;
 
         constructor() {
-            this.greeterInstance = new greeter.Greeter('Inner-htmled greeting', '.output-area');
+            this.greeterInstance = new greeter.Greeter('bla bla', '.output-area');
+        }
+
+        public ShowGreet() {
+            console.log(greeter.MyColor.Blue);
+            console.log('ShowGreet context: ', this);
             this.greeterInstance.greet();
         }
     }
