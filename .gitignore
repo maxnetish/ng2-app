@@ -1,4 +1,6 @@
-node_modules
-.idea
-build
-.tscache
+node_modules/
+build/
+dist/
+.idea/
+typings/
+

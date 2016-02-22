@@ -1,0 +1,21 @@
+<header>
+    <nav>
+        <h1>Hello {{ name }}</h1>
+        <ul>
+            <li router-active="active">
+                <a [routerLink]=" ['Index'] ">Index</a>
+            </li>
+            <li router-active="active">
+                <a [routerLink]=" ['Home'] ">Home</a>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <router-outlet></router-outlet>
+</main>
+
+<footer>
+    <small>ng2-app2</small>
+</footer>
