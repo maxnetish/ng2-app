@@ -1,9 +1,13 @@
-import {Component} from 'angular2/core';
+import {Component, Renderer} from 'angular2/core';
 import {FORM_DIRECTIVES} from 'angular2/common';
 import {Http} from 'angular2/http';
+import {Router, RouteParams} from 'angular2/router';
+import {Observable} from 'rxjs/Observable';
 
-import {Title} from './providers/title';
+//import {Title} from './providers/title';
 import {XLarge} from './directives/x-large';
+
+import {GoogleMapsApi} from './providers/google-maps-api';
 
 @Component({
     // The selector is what angular internally uses
@@ -12,7 +16,8 @@ import {XLarge} from './directives/x-large';
     selector: 'home',  // <home></home>
     // We need to tell Angular's Dependency Injection which providers are in our app.
     providers: [
-        Title
+        //Title,
+        GoogleMapsApi
     ],
     // We need to tell Angular's compiler which directives are in our template.
     // Doing so will allow Angular to attach our behavior to an element
@@ -29,12 +34,31 @@ import {XLarge} from './directives/x-large';
 })
 export class Home {
     // TypeScript public modifiers
-    constructor(public title: Title, public http: Http) {
-
+    constructor(public http: Http,
+                private _router: Router,
+                private _routeParams: RouteParams,
+                private _googlePlaceService: GoogleMapsApi,
+                private _renderer: Renderer) {
+        this.searchModel = {
+            term: this._routeParams.get('q') || ''
+        };
     }
 
     ngOnInit() {
-        console.log('hello Home component');
+        console.log('on init Home component handler');
+        if (this.searchModel.term) {
+            this.searchModel.items = this._googlePlaceService.search(this.searchModel.term);
+            console.log(this.searchModel.items);
+            this.searchModel.items.subscribe(function() {
+                console.log(arguments);
+            })
+        }
     }
 
+    onSubmit() {
+        this._router.navigate([
+            'Home',
+            {q: this.searchModel.term}
+        ]);
+    }
 }

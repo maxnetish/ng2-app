@@ -7,6 +7,7 @@ import {FORM_PROVIDERS} from 'angular2/common';
 
 import {RouterActive} from './directives/router-active';
 import {Home} from './home/home';
+import {About} from './about/about';
 
 /*
  * App Component
@@ -21,9 +22,9 @@ import {Home} from './home/home';
     template: require('./app.tpl.html')
 })
 @RouteConfig([
-    {path: '/', component: Home, name: 'Index'},
-    {path: '/home', component: Home, name: 'Home'},
-    {path: '/**', redirectTo: ['Index']}
+    {path: '/', component: Home, name: 'Home'},
+    {path: '/about', component: About, name: 'About'},
+    {path: '/**', redirectTo: ['Home']}
 ])
 export class App {
     name = 'ng2-app2';
