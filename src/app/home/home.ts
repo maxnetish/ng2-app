@@ -17,7 +17,6 @@ import {GoogleMapsApi} from './providers/google-maps-api';
     // We need to tell Angular's Dependency Injection which providers are in our app.
     providers: [
         //Title,
-        GoogleMapsApi
     ],
     // We need to tell Angular's compiler which directives are in our template.
     // Doing so will allow Angular to attach our behavior to an element
@@ -34,11 +33,11 @@ import {GoogleMapsApi} from './providers/google-maps-api';
 })
 export class Home {
     // TypeScript public modifiers
-    constructor(public http: Http,
-                private _router: Router,
-                private _routeParams: RouteParams,
-                private _googlePlaceService: GoogleMapsApi,
-                private _renderer: Renderer) {
+    constructor(public http:Http,
+                private _router:Router,
+                private _routeParams:RouteParams,
+                private _googleMapsApi:GoogleMapsApi,
+                private _renderer:Renderer) {
         this.searchModel = {
             term: this._routeParams.get('q') || ''
         };
@@ -47,11 +46,15 @@ export class Home {
     ngOnInit() {
         console.log('on init Home component handler');
         if (this.searchModel.term) {
-            this.searchModel.items = this._googlePlaceService.search(this.searchModel.term);
-            console.log(this.searchModel.items);
-            this.searchModel.items.subscribe(function() {
-                console.log(arguments);
-            })
+            //this.searchModel.items = this._googlePlaceService.search(this.searchModel.term);
+            //console.log(this.searchModel.items);
+            //this.searchModel.items.subscribe(function() {
+            //    console.log(arguments);
+            //});
+            this._googleMapsApi.search(this.searchModel.term)
+                .then(function (response:any) {
+                    console.log('search then: ', response);
+                });
         }
     }
 

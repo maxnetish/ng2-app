@@ -9,13 +9,14 @@ import {RouterActive} from './directives/router-active';
 import {Home} from './home/home';
 import {About} from './about/about';
 
+import {GoogleMapsApi} from './home/providers/google-maps-api';
 /*
  * App Component
  * Top Level Component
  */
 @Component({
     selector: 'app',
-    providers: [...FORM_PROVIDERS],
+    providers: [...FORM_PROVIDERS, GoogleMapsApi],
     directives: [...ROUTER_DIRECTIVES, RouterActive],
     pipes: [],
     styles: [require('./app.css')],
