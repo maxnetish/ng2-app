@@ -18,7 +18,7 @@ module.exports = {
         "buttons": true,
 
         //"component-animations": true,
-        //"glyphicons": true,
+        "glyphicons": true,
         "dropdowns": true,
         "button-groups": true,
         "input-groups": true,
@@ -28,7 +28,7 @@ module.exports = {
         //"pagination": true,
         //"pager": true,
         "labels": true,
-        //"badges": true,
+        "badges": true,
         //"jumbotron": true,
         "thumbnails": true,
         //"alerts": true,

@@ -13,10 +13,14 @@ import {GoogleMapsApi} from './providers/google-maps-api';
 class SearchModel {
     term:string;
     items:google.maps.places.PlaceResult[];
+    pagination:google.maps.places.PlaceSearchPagination;
+    waitForResponse:boolean;
 
     constructor() {
         this.term = '';
         this.items = [];
+        this.pagination = null;
+        this.waitForResponse = false;
     }
 }
 
@@ -64,17 +68,14 @@ export class Home {
         console.log('on init Home component handler, searchModel: ', this.searchModel);
 
 
-        if (this.searchModel.term) {
+        if (this.searchModel.term && !this.searchModel.waitForResponse) {
+            this.searchModel.waitForResponse = true;
             this.getMapInstance()
                 .then((map) => {
                     return self._googleMapsApi.getPlacesService(map);
                 })
                 .then((placeService)=> {
-                    placeService.textSearch({query: this.searchModel.term}, (places, status) => {
-                        this._ngZone.run(()=> {
-                            return self.searchModel.items.splice(0, self.searchModel.items.length, ...places);
-                        });
-                    });
+                    placeService.textSearch({query: self.searchModel.term}, this.onSearchResponse.bind(self));
                     return placeService;
                 })
                 ['catch'](function (err) {
@@ -90,6 +91,14 @@ export class Home {
         ]);
     }
 
+    onClickMoreButton() {
+        if (!(this.searchModel.pagination && this.searchModel.pagination.hasNextPage && !this.searchModel.waitForResponse)) {
+            return;
+        }
+        this.searchModel.waitForResponse = true;
+        this.searchModel.pagination.nextPage();
+    }
+
     getMapInstance():Promise<google.maps.Map> {
         Home.mapInstance = Home.mapInstance || new Promise((resolve:Function, reject:Function)=> {
                 var g = new GoogleMapsApi();
@@ -101,5 +110,15 @@ export class Home {
                     });
             });
         return Home.mapInstance;
+    }
+
+    private onSearchResponse(places:google.maps.places.PlaceResult[], status:string, pagination:google.maps.places.PlaceSearchPagination = null) {
+        var self = this;
+        console.log('Search response args: ', places, status, pagination);
+        this._ngZone.run(()=> {
+            self.searchModel.waitForResponse = false;
+            self.searchModel.pagination = pagination;
+            return Array.prototype.push.apply(self.searchModel.items, places);
+        });
     }
 }

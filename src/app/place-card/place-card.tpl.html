@@ -3,18 +3,92 @@
 </div>
 <div class="media-body">
     <h4 class="media-heading">{{ place.name }}</h4>
-    <p>{{ place.formatted_address }}</p>
-    <small>{{place.international_phone_number}}</small>
-    <ul class="list-unstyled list-inline">
-        <li *ngFor="#photo of place.photos">
-            <img [src]="photo.getUrl({maxWidth: 240})" class="img-rounded"/>
-            <ul class="list-unstyled">
+    <div>
+        <a href="javascript:void 0" *ngIf="!detailsLoaded" (click)="onLoadDetailsButtonClick()">Details</a>
+        <span *ngIf="!detailsLoaded">&nbsp;</span>
+        <a *ngIf="place.url" target="_blank" [href]="place.url">Page of place (new window)</a>
+        <span *ngIf="place.url">&nbsp;</span>
+        <a *ngIf="place.website" target="_blank" [href]="place.website">{{place.website}}</a>
+    </div>
+    <div>
+        <span *ngIf="place.adr_address" [innerHTML]="place.adr_address"></span>
+        <span *ngIf="!place.adr_address">{{place.formatted_address}}</span>
+    </div>
+    <div>
+        <small *ngIf="place.international_phone_number"><i class="glyphicon glyphicon-phone"></i>&nbsp;{{place.international_phone_number}}
+        </small>
+    </div>
+    <div>
+        <small *ngIf="place.formatted_phone_number"><i class="glyphicon glyphicon-phone-alt"></i>&nbsp;{{place.formatted_phone_number}}
+        </small>
+    </div>
+    <div *ngIf="detailsLoaded">
+        <span class="badge" *ngIf="place.price_level>-1">
+            <i class="glyphicon glyphicon-euro"></i>&nbsp;{{place.price_level}}
+        </span>
+        <span class="badge" *ngIf="place.rating">
+            <i class="glyphicon glyphicon-star"></i>&nbsp;{{place.rating}}
+        </span>
+    </div>
+    <div *ngIf="place.types && detailsLoaded">
+        <ul class="list-unstyled list-inline">
+            <li *ngFor="#oneType of place.types">
+                <span class="label label-default">{{oneType}}</span>
+            </li>
+        </ul>
+    </div>
+    <ul *ngIf="detailsLoaded" class="media-list" style="margin-top: 0.5rem;">
+        <li class="media" *ngFor="#review of place.reviews">
+            <div class="media-left">
+                <div *ngIf="review.profile_photo_url"
+                     style="width:48px;height:48px;text-align:center;overflow:hidden;">
+                    <img class="media-object" style="height:48px;"
+                         [src]="review.profile_photo_url"/>
+                </div>
+                <div *ngIf="!review.profile_photo_url"
+                     class="media-object" style="height:48px;width:48px;text-align: center">
+                    <i class="glyphicon glyphicon-user" style="font-size:36px;color:gray;"></i>
+                </div>
+            </div>
+            <div class="media-body">
+                <div class="media-heading">
+                    <a *ngIf="review.author_url" [href]="review.author_url" target="_blank">{{review.author_name}}</a>
+                    <span *ngIf="!review.author_url">{{review.author_name}}</span>
+                    <span>&nbsp;about this place:</span>
+                </div>
+                <div>
+                    <span>{{review.text}}</span>
+                </div>
+                <ul class="list-unstyled list-inline">
+                    <li *ngIf="review.rating">
+                        <span class="badge">{{review.rating}}</span>
+                    </li>
+                    <li *ngFor="#aspect of review.aspects">
+                        <span class="badge">
+                            <small>{{aspect.type}}:&nbsp;{{aspect.rating}}</small>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+    <ul *ngIf="detailsLoaded" class="list-unstyled list-inline" style="margin-top: 0.5rem;">
+        <li *ngFor="#photo of place.photos; #photoInd=index">
+            <img [src]="photoUrlsCacheMini[photoInd]" class="img-rounded"/>
+            <ul class="list-unstyled" style="max-width:240px;">
                 <li *ngFor="#htmlAttr of photo.html_attributions">
-                    <small [innerHTML]="htmlAttr"></small>
+                    <small style="font-size: small" [innerHTML]="htmlAttr"></small>
                 </li>
             </ul>
         </li>
     </ul>
+    <div>
+        <a href="javascript:void 0" (click)="mapVisible=!mapVisible">
+            <span *ngIf="mapVisible">Hide map</span>
+            <span *ngIf="!mapVisible">Show map</span>
+        </a>
+        <place-map [place]="place" *ngIf="mapVisible" class="place-map-wrapper"></place-map>
+    </div>
     <ul>
         <li *ngFor="#htmlAttr of place.html_attributions">
             <small>{{ htmlAttr }}</small>

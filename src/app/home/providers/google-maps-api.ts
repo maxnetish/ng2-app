@@ -12,7 +12,7 @@ export class GoogleMapsApi {
 
         const callbackName:string = `gmapsapireadycallback${new Date().getMilliseconds()}`;
         const apiKey = 'AIzaSyANnIuW5Xvh3WCEH4MLU0nZTMCJDh-gDLI';
-        const scriptSrc:string = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=${callbackName}&libraries=places`;
+        const scriptSrc:string = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&language=ru&callback=${callbackName}&libraries=places`;
         const googlePropKey:string = 'google';
         scriptElm.src = scriptSrc;
 
@@ -28,6 +28,7 @@ export class GoogleMapsApi {
         document.body.appendChild(scriptElm);
     });
 
+    private m_placeService:google.maps.places.PlacesService;
 
     createMap(element:HTMLElement, mapOptions:google.maps.MapOptions = {zoom: 17}):Promise<google.maps.Map> {
         return GoogleMapsApi._promiseGoogleMapsLib
@@ -36,11 +37,13 @@ export class GoogleMapsApi {
             });
     }
 
-    getPlacesService(mapInstance:google.maps.Map):Promise<google.maps.places.PlacesService> {
+    getPlacesService(mapInstance?:google.maps.Map):Promise<google.maps.places.PlacesService> {
         return GoogleMapsApi._promiseGoogleMapsLib
             .then((lib) => {
-                return new lib.places.PlacesService(mapInstance);
+                if (!this.m_placeService) {
+                    this.m_placeService = new lib.places.PlacesService(mapInstance);
+                }
+                return this.m_placeService;
             });
     }
-
 }
