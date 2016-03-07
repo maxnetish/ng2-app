@@ -25,7 +25,7 @@ export class RouterActive {
     router: Router,
     element: ElementRef,
     renderer: Renderer,
-    @Query(RouterLink) routerLink: QueryList<RouterLink>,
+    @Query(RouterLink, true) routerLink: QueryList<RouterLink>,
     @Attribute('router-active') routerActiveAttr: string) {
 
     router.subscribe(() => {

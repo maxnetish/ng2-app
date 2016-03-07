@@ -1,21 +1,40 @@
-<div>
-  <!--<span x-large>Your Content Here</span>-->
-  <!--<input type="text" [value]="title.value" (input)="title.value = $event.target.value" autofocus>-->
-  <!--
-    Rather than wiring up two-way data-binding ourselves
-    we can use Angular's [(ngModel)] syntax
-    <input type="text" [(ngModel)]="title.value">
-  -->
+<section>
+    <!--<span x-large>Your Content Here</span>-->
+    <!--<input type="text" [value]="title.value" (input)="title.value = $event.target.value" autofocus>-->
+    <!--
+      Rather than wiring up two-way data-binding ourselves
+      we can use Angular's [(ngModel)] syntax
+      <input type="text" [(ngModel)]="title.value">
+    -->
 
-  <!--<pre>this.title = {{ title | json }}</pre>-->
+    <!--<pre>this.title = {{ title | json }}</pre>-->
 
-    <form (ngSubmit)="onSubmit()">
-        <input type="text" [(ngModel)]="searchModel.term" required>
-        <button type="submit">Search</button>
-    </form>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <form (ngSubmit)="onSubmit()">
+                <div class="form-group">
+                    <div class="input-group col-xs-offset-0 col-xs-12 col-md-8 col-md-offset-2">
+                        <input class="form-control" type="text" [(ngModel)]="searchModel.term" required/>
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-default">Search</button>
+                </span>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <div id="map-ct"></div>
 
-    <!--<div>{{searchModel.items | async | json}}</div>-->
+    <!--<div>{{searchModel.items | json}}</div>-->
+    <div class="row">
+        <div class="col-xs-12">
+            <ul class="media-list">
+                <li class="media" *ngFor="#onePlace of searchModel.items">
+                    <place-card [place]="onePlace"></place-card>
+                </li>
+            </ul>
+        </div>
+    </div>
 
-</div>
+</section>

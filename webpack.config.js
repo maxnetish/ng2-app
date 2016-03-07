@@ -29,6 +29,8 @@ module.exports = {
   // our angular app
   entry: { 'vendor': './src/vendor.ts', 'main': './src/main.ts' },
 
+  styleLoader: require('extract-text-webpack-plugin').extract('style-loader', 'css-loader!less-loader'),
+
   // Config for our build files
   output: {
     path: root('dist'),
@@ -68,9 +70,13 @@ module.exports = {
       { test: /\.css$/,   loader: 'raw-loader' },
 
       // support for .html as raw text
-      { test: /\.html$/,  loader: 'raw-loader' }
+      { test: /\.html$/,  loader: 'raw-loader' },
 
       // if you add a loader include the resolve file extension above
+        { test: /\.(woff|woff2)$/,  loader: "url-loader?limit=10000&mimetype=application/font-woff" },
+        { test: /\.ttf$/,    loader: "file-loader" },
+        { test: /\.eot$/,    loader: "file-loader" },
+        { test: /\.svg$/,    loader: "file-loader" }
     ]
   },
 

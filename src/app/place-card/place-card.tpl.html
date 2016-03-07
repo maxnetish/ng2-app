@@ -1,0 +1,23 @@
+<div class="media-left">
+    <img class="media-object" style="height:3rem;" [src]="place.icon"/>
+</div>
+<div class="media-body">
+    <h4 class="media-heading">{{ place.name }}</h4>
+    <p>{{ place.formatted_address }}</p>
+    <small>{{place.international_phone_number}}</small>
+    <ul class="list-unstyled list-inline">
+        <li *ngFor="#photo of place.photos">
+            <img [src]="photo.getUrl({maxWidth: 240})" class="img-rounded"/>
+            <ul class="list-unstyled">
+                <li *ngFor="#htmlAttr of photo.html_attributions">
+                    <small [innerHTML]="htmlAttr"></small>
+                </li>
+            </ul>
+        </li>
+    </ul>
+    <ul>
+        <li *ngFor="#htmlAttr of place.html_attributions">
+            <small>{{ htmlAttr }}</small>
+        </li>
+    </ul>
+</div>
