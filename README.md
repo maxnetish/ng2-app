@@ -1,6 +1,9 @@
 # ng2-app2
 
-ng2 app
+Simple example of angular2/webpack 
+
+npm install
+npm start
 
 # License
 [MIT](/LICENSE)

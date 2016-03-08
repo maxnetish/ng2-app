@@ -14,7 +14,7 @@
             <form (ngSubmit)="onSubmit()">
                 <div class="form-group">
                     <div class="input-group col-xs-offset-0 col-xs-12 col-md-8 col-md-offset-2">
-                        <input class="form-control" type="text" [(ngModel)]="searchModel.term" required/>
+                        <input class="form-control" type="text" [(ngModel)]="searchTermInput" required/>
                 <span class="input-group-btn">
                     <button type="submit" class="btn btn-default" [disabled]="searchModel.waitForResponse">Search</button>
                 </span>
@@ -26,7 +26,7 @@
 
     <div id="map-ct"></div>
 
-    <!--<div>{{searchModel.items | json}}</div>-->
+    <!--<div>{{s_searchModel.items | json}}</div>-->
     <div class="row">
         <div class="col-xs-12">
             <ul class="media-list">

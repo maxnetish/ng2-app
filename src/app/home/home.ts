@@ -11,17 +11,10 @@ import {PlaceCard} from '../place-card/place-card';
 import {GoogleMapsApi} from './providers/google-maps-api';
 
 class SearchModel {
-    term:string;
-    items:google.maps.places.PlaceResult[];
-    pagination:google.maps.places.PlaceSearchPagination;
-    waitForResponse:boolean;
-
-    constructor() {
-        this.term = '';
-        this.items = [];
-        this.pagination = null;
-        this.waitForResponse = false;
-    }
+    term:string = null;
+    items:google.maps.places.PlaceResult[] = [];
+    pagination:google.maps.places.PlaceSearchPagination = null;
+    waitForResponse:boolean = false;
 }
 
 @Component({
@@ -48,10 +41,11 @@ class SearchModel {
     template: require('./home.html')
 })
 export class Home {
-    static mapInstance;
+    static s_promiseMapInstance:Promise<google.maps.Map>;
+    static s_searchModel:SearchModel = new SearchModel();
 
-    // TypeScript public modifiers
     searchModel:SearchModel;
+    searchTermInput:string;
 
     constructor(public http:Http,
                 private _router:Router,
@@ -59,35 +53,25 @@ export class Home {
                 private _googleMapsApi:GoogleMapsApi,
                 private _renderer:Renderer,
                 private _ngZone:NgZone) {
-        this.searchModel = new SearchModel();
-        this.searchModel.term = this._routeParams.get('q') || '';
+        this.searchModel = Home.s_searchModel;
     }
 
     ngOnInit() {
         var self = this;
-        console.log('on init Home component handler, searchModel: ', this.searchModel);
+        this.searchTermInput = this._routeParams.get('q');
 
-
-        if (this.searchModel.term && !this.searchModel.waitForResponse) {
-            this.searchModel.waitForResponse = true;
-            this.getMapInstance()
-                .then((map) => {
-                    return self._googleMapsApi.getPlacesService(map);
-                })
-                .then((placeService)=> {
-                    placeService.textSearch({query: self.searchModel.term}, this.onSearchResponse.bind(self));
-                    return placeService;
-                })
-                ['catch'](function (err) {
-                console.warn('search exception: ', err);
-            });
+        if (this.searchTermInput !== this.searchModel.term) {
+            this.searchModel.term = this.searchTermInput;
+            this.searchModel.items.length = 0;
+            this.searchModel.pagination = null;
+            this.doNewSearch();
         }
     }
 
     onSubmit() {
         this._router.navigate([
             'Home',
-            {q: this.searchModel.term}
+            {q: this.searchTermInput}
         ]);
     }
 
@@ -100,7 +84,7 @@ export class Home {
     }
 
     getMapInstance():Promise<google.maps.Map> {
-        Home.mapInstance = Home.mapInstance || new Promise((resolve:Function, reject:Function)=> {
+        Home.s_promiseMapInstance = Home.s_promiseMapInstance || new Promise((resolve:Function, reject:Function)=> {
                 var g = new GoogleMapsApi();
                 g.createMap(document.getElementById('map-ct'))
                     .then((r)=> {
@@ -109,16 +93,43 @@ export class Home {
                         reject(r);
                     });
             });
-        return Home.mapInstance;
+        return Home.s_promiseMapInstance;
+    }
+
+    private doNewSearch() {
+        var self = this;
+
+        if (this.searchModel.waitForResponse) {
+            return;
+        }
+
+        if (!this.searchModel.term) {
+            this.searchModel.items.length = 0;
+            this.searchModel.pagination = null;
+            return;
+        }
+
+        this.searchModel.waitForResponse = true;
+        this.getMapInstance()
+            .then((map) => {
+                return self._googleMapsApi.getPlacesService(map);
+            })
+            .then((placeService)=> {
+                placeService.textSearch({query: self.searchModel.term}, this.onSearchResponse.bind(self));
+                return placeService;
+            })
+            ['catch'](function (err) {
+            console.warn('search exception: ', err);
+        });
     }
 
     private onSearchResponse(places:google.maps.places.PlaceResult[], status:string, pagination:google.maps.places.PlaceSearchPagination = null) {
         var self = this;
         console.log('Search response args: ', places, status, pagination);
         this._ngZone.run(()=> {
-            self.searchModel.waitForResponse = false;
-            self.searchModel.pagination = pagination;
-            return Array.prototype.push.apply(self.searchModel.items, places);
+            this.searchModel.waitForResponse = false;
+            this.searchModel.pagination = pagination;
+            return Array.prototype.push.apply(this.searchModel.items, places);
         });
     }
 }
